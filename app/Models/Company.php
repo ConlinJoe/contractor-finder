@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Company extends Model
 {
@@ -15,6 +16,7 @@ class Company extends Model
         'license_status',
         'yelp_id',
         'google_place_id',
+        'website',
         'facebook_id',
         'average_rating',
         'total_reviews',
@@ -45,5 +47,10 @@ class Company extends Model
     public function latestScore()
     {
         return $this->hasOne(CompanyScore::class)->latestOfMany('scored_at');
+    }
+
+    public function license(): HasOne
+    {
+        return $this->hasOne(License::class, 'license_no', 'license_number');
     }
 }

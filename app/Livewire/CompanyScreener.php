@@ -23,6 +23,20 @@ class CompanyScreener extends Component
     public ?array $selectedBusiness = null;
     public ?array $results = null;
     public string $errorMessage = '';
+    public array $apiIssues = [];
+
+    public function mount()
+    {
+        // Check API status on component load
+        $screeningService = app(CompanyScreeningService::class);
+        $apiStatus = $screeningService->checkApiStatus();
+
+        foreach ($apiStatus as $service => $status) {
+            if ($status['status'] !== 'working') {
+                $this->apiIssues[] = $status['message'];
+            }
+        }
+    }
 
     public function search()
     {
@@ -31,6 +45,7 @@ class CompanyScreener extends Component
         $this->showResults = false;
         $this->showBusinessSelection = false;
         $this->errorMessage = '';
+        $this->apiIssues = [];
 
         try {
             $screeningService = app(CompanyScreeningService::class);
@@ -38,6 +53,7 @@ class CompanyScreener extends Component
 
             if (!$result['success']) {
                 $this->errorMessage = $result['message'];
+                $this->apiIssues = $result['api_issues'] ?? [];
                 $this->isLoading = false;
                 return;
             }
@@ -50,6 +66,8 @@ class CompanyScreener extends Component
                 $this->showResults = true;
             }
 
+            $this->apiIssues = $result['api_issues'] ?? [];
+
         } catch (\Exception $e) {
             $this->errorMessage = 'An error occurred while searching for the company.';
         }
@@ -61,6 +79,7 @@ class CompanyScreener extends Component
     {
         $this->isLoading = true;
         $this->errorMessage = '';
+        $this->apiIssues = [];
 
         try {
             $screeningService = app(CompanyScreeningService::class);
@@ -68,6 +87,7 @@ class CompanyScreener extends Component
 
             if (!$result['success']) {
                 $this->errorMessage = $result['message'];
+                $this->apiIssues = $result['api_issues'] ?? [];
                 $this->isLoading = false;
                 return;
             }
@@ -75,6 +95,7 @@ class CompanyScreener extends Component
             $this->results = $result;
             $this->showResults = true;
             $this->showBusinessSelection = false;
+            $this->apiIssues = $result['api_issues'] ?? [];
 
         } catch (\Exception $e) {
             $this->errorMessage = 'An error occurred while processing the selected business.';
@@ -85,7 +106,7 @@ class CompanyScreener extends Component
 
     public function resetSearch()
     {
-        $this->reset(['companyName', 'city', 'state', 'isLoading', 'showResults', 'showBusinessSelection', 'businesses', 'results', 'errorMessage']);
+        $this->reset(['companyName', 'city', 'state', 'isLoading', 'showResults', 'showBusinessSelection', 'businesses', 'results', 'errorMessage', 'apiIssues']);
     }
 
     public function render()
