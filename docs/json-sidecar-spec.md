@@ -34,3 +34,4 @@ All fields must reflect the same content as the markdown section.
 - **Dates:** `last_updated` should be an ISO date (YYYY-MM-DD).
 - **Extensibility:** You may add fields, but do not remove any of the above without versioning.
 - **Versioning (optional):** Add `"schema_version": "1.0.0"` if you plan to evolve this contract.
+

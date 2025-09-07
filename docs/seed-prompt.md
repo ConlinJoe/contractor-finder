@@ -75,3 +75,4 @@ A 2-column markdown table:
 
 ## Optional: JSON Sidecar (must match the markdown)
 Alongside the markdown, also return a compact JSON block (on a new line after the report) wrapped in triple backticks with `json` (see separate spec file).
+
