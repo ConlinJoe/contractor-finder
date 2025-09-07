@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Company Screener</h1>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Contractor Search Tool</h1>
             <p class="text-lg text-gray-600">Enter a company name and location to get comprehensive reviews and scoring</p>
         </div>
 
@@ -18,7 +18,7 @@
                             type="text"
                             id="companyName"
                             wire:model="companyName"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Enter company name"
                         >
                         @error('companyName')
@@ -34,7 +34,7 @@
                             type="text"
                             id="city"
                             wire:model="city"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Enter city"
                         >
                         @error('city')
@@ -50,21 +50,24 @@
                             type="text"
                             id="state"
                             wire:model="state"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Enter state"
                         >
                     </div>
                 </div>
 
                 <div class="flex justify-center">
-                    <button
-                        type="submit"
-                        wire:loading.attr="disabled"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <span wire:loading.remove>Search Company</span>
-                        <span wire:loading>Searching...</span>
-                    </button>
+                                            <button
+                            type="submit"
+                            @if($isLoading) disabled @endif
+                            class="bg-green-700 text-white uppercase text-sm font-bold px-6 py-2 rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            @if($isLoading)
+                                Searching...
+                            @else
+                                Search Company
+                            @endif
+                        </button>
                 </div>
             </form>
         </div>
@@ -114,7 +117,7 @@
         <!-- Loading State -->
         @if($isLoading)
             <div class="bg-white rounded-lg shadow-md p-8 text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
                 <p class="text-gray-600">Analyzing company data...</p>
                 <p class="text-sm text-gray-500 mt-2">This may take a few moments</p>
             </div>
@@ -126,8 +129,8 @@
                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Multiple businesses found. Please select one:</h2>
                 <div class="space-y-4">
                     @foreach($businesses as $business)
-                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" wire:click="selectBusiness('{{ $business['id'] }}')">
-                            <div class="flex justify-between items-start">
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
                                 <div>
                                     <h3 class="font-medium text-gray-900">{{ $business['name'] }}</h3>
                                     <p class="text-sm text-gray-600">{{ $business['address'] }}, {{ $business['city'] }}, {{ $business['state'] }}</p>
@@ -145,6 +148,17 @@
                                     <p class="text-sm text-gray-600">{{ $business['review_count'] }} reviews</p>
                                 </div>
                             </div>
+                            <button
+                                wire:click="selectBusiness('{{ $business['id'] }}')"
+                                @if($isLoading) disabled @endif
+                                class="w-full bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                @if($isLoading)
+                                    Processing...
+                                @else
+                                    Select This Company
+                                @endif
+                            </button>
                         </div>
                     @endforeach
                 </div>
@@ -172,14 +186,14 @@
                             @endif
                             @if($company->website)
                                 <p class="text-sm text-gray-600 mt-1">
-                                    <a href="{{ $company->website }}" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                    <a href="{{ $company->website }}" target="_blank" class="text-green-700 hover:text-green-800 underline">
                                         Visit Website
                                     </a>
                                 </p>
                             @endif
                         </div>
                         <div class="text-right">
-                            <div class="text-3xl font-bold text-blue-600">{{ number_format($company->score, 1) }}</div>
+                            <div class="text-3xl font-bold text-green-700">{{ number_format($company->score, 1) }}</div>
                             <div class="text-sm text-gray-600">Overall Score</div>
                         </div>
                     </div>
@@ -189,7 +203,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h3 class="font-semibold text-gray-900 mb-2">Review Score</h3>
-                        <div class="text-2xl font-bold text-green-600">{{ number_format($score->review_score, 1) }}</div>
+                        <div class="text-2xl font-bold text-green-700">{{ number_format($score->review_score, 1) }}</div>
                         <p class="text-sm text-gray-600">{{ $company->total_reviews }} reviews</p>
                         @if($company->average_rating)
                             <p class="text-sm text-gray-600">{{ number_format($company->average_rating, 1) }}/5 average rating</p>
@@ -198,7 +212,7 @@
 
                     <div class="bg-gray-50 rounded-lg p-4">
                         <h3 class="font-semibold text-gray-900 mb-2">License Score</h3>
-                        <div class="text-2xl font-bold text-blue-600">{{ number_format($score->license_score, 1) }}</div>
+                        <div class="text-2xl font-bold text-green-700">{{ number_format($score->license_score, 1) }}</div>
                         <p class="text-sm text-gray-600">{{ ucfirst($company->license_status ?? 'Unknown') }}</p>
                     </div>
 
@@ -254,7 +268,7 @@
                 @if($company->license)
                     <div class="mb-8">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                            <span class="text-blue-500 mr-2">📋</span>
+                            <span class="text-green-500 mr-2">📋</span>
                             License Information
                         </h3>
                         <div class="bg-gray-50 rounded-lg p-6">
