@@ -344,6 +344,47 @@
                     </div>
                 @endif
 
+                <!-- AI Analysis Report -->
+                @if($company->ai_report_available && $company->ai_report_markdown)
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <span class="text-blue-500 mr-2">🤖</span>
+                            AI Analysis Report
+                        </h3>
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                            <div class="prose prose-sm max-w-none">
+                                {!! \Illuminate\Support\Str::markdown($company->ai_report_markdown) !!}
+                            </div>
+                            @if($company->ai_report_generated_at)
+                                <div class="mt-4 pt-4 border-t border-blue-200">
+                                    <p class="text-xs text-blue-600">
+                                        <span class="font-medium">Report generated:</span>
+                                        {{ $company->ai_report_generated_at->format('M j, Y \a\t g:i A') }}
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @elseif($company->ai_report_available === false)
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <span class="text-gray-400 mr-2">🤖</span>
+                            AI Analysis Report
+                        </h3>
+                        <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                            <div class="text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.709M15 6.291A7.962 7.962 0 0012 5c-2.34 0-4.29 1.009-5.824 2.709" />
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">AI Analysis Unavailable</h3>
+                                <p class="mt-1 text-sm text-gray-500">
+                                    We encountered an issue generating the AI analysis report for this company.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Recent Reviews -->
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Reviews</h3>

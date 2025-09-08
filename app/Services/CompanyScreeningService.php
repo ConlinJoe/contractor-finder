@@ -11,6 +11,7 @@ class CompanyScreeningService
 {
     public function __construct(
         private OpenAIService $openAIService,
+        private AIAnalysisService $aiAnalysisService,
         private YelpService $yelpService,
         private GooglePlacesService $googlePlacesService,
         private ScoringService $scoringService,
@@ -273,10 +274,28 @@ class CompanyScreeningService
             $score = $this->scoringService->calculateScore($company);
             $company->update(['score' => $score->overall_score]);
 
+            // Generate AI analysis report
+            $aiReport = $this->aiAnalysisService->generateContractorReport($company);
+            if ($aiReport['success']) {
+                $company->update([
+                    'ai_report_markdown' => $aiReport['markdown'],
+                    'ai_report_json' => $aiReport['json'],
+                    'ai_report_generated_at' => $aiReport['generated_at'],
+                    'ai_report_available' => true,
+                ]);
+            } else {
+                // Log the error but don't fail the entire process
+                Log::warning('AI report generation failed', [
+                    'company_id' => $company->id,
+                    'error' => $aiReport['error']
+                ]);
+            }
+
             return [
                 'success' => true,
                 'company' => $company->load(['reviews', 'latestScore', 'license']),
                 'score' => $score,
+                'ai_report' => $aiReport,
             ];
         });
     }

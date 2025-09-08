@@ -24,6 +24,10 @@ class Company extends Model
         'cons',
         'score',
         'last_scraped_at',
+        'ai_report_markdown',
+        'ai_report_json',
+        'ai_report_generated_at',
+        'ai_report_available',
     ];
 
     protected $casts = [
@@ -32,6 +36,9 @@ class Company extends Model
         'average_rating' => 'decimal:2',
         'score' => 'decimal:2',
         'last_scraped_at' => 'datetime',
+        'ai_report_json' => 'array',
+        'ai_report_generated_at' => 'datetime',
+        'ai_report_available' => 'boolean',
     ];
 
     public function reviews(): HasMany
