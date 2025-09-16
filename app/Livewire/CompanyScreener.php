@@ -44,7 +44,9 @@ class CompanyScreener extends Component
     public array $jobTypes = [];
     public array $jobTypeResults = [];
 
-    public function mount()
+    protected $listeners = ['trigger-search' => 'performAutoSearch'];
+
+    public function mount(?string $companyName = null, ?string $city = null, ?string $state = null)
     {
         // Check API status on component load
         $screeningService = app(CompanyScreeningService::class);
@@ -59,6 +61,16 @@ class CompanyScreener extends Component
         // Load job types
         $jobTypeService = app(JobTypeService::class);
         $this->jobTypes = $jobTypeService->getJobTypes();
+
+        // If search parameters are provided, pre-fill form and trigger search
+        if ($companyName && $city) {
+            $this->companyName = $companyName;
+            $this->city = $city;
+            $this->state = $state;
+
+            // Automatically trigger search after a brief delay to ensure component is fully loaded
+            $this->dispatch('trigger-search');
+        }
     }
 
     public function search()
@@ -270,6 +282,15 @@ class CompanyScreener extends Component
             $this->errorMessage = 'An error occurred while processing the company: ' . $e->getMessage();
             $this->isLoading = false;
         }
+    }
+
+    public function performAutoSearch()
+    {
+        // Small delay to ensure component is fully rendered
+        $this->dispatch('$refresh');
+
+        // Trigger the search after a brief delay
+        $this->js('setTimeout(() => { $wire.search(); }, 100);');
     }
 
     public function render()
