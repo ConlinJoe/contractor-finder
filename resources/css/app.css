@@ -6,6 +6,18 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+@layer base {
+    body {
+        @apply bg-gray-50;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply bg-blue-600 text-white px-4 py-2 rounded-md;
+    }
+}
+
 /* Force generation of commonly used classes */
 .bg-gray-50 { background-color: rgb(249 250 251); }
 .bg-white { background-color: rgb(255 255 255); }
@@ -31,3 +43,7 @@
 .transition { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
 .duration-200 { transition-duration: 200ms; }
 .ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* AlpineJS specific classes */
+[x-cloak] { display: none !important; }
+.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }

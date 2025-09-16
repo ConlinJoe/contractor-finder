@@ -18,6 +18,117 @@ class CompanyScreeningService
         private CSLBService $cslbService
     ) {}
 
+    public function processExistingCompany(Company $company): array
+    {
+        try {
+            Log::info("Processing existing company: {$company->name}", [
+                'company_id' => $company->id,
+                'yelp_id' => $company->yelp_id,
+                'google_place_id' => $company->google_place_id,
+                'has_pros' => !empty($company->pros),
+                'has_cons' => !empty($company->cons)
+            ]);
+
+            // Get fresh reviews from APIs
+            $this->refreshCompanyData($company);
+
+            // Look up CSLB license information if not already done
+            if (empty($company->license_number) || empty($company->license_status)) {
+                Log::info("Looking up CSLB license for {$company->name}");
+                $license = $this->cslbService->searchLicense($company->name, $company->city, $company->state);
+                if ($license) {
+                    $company->update([
+                        'license_number' => $license->license_no,
+                        'license_status' => $license->primary_status,
+                    ]);
+                    Log::info("CSLB license found for {$company->name}: {$license->license_no}");
+                } else {
+                    Log::info("No CSLB license found for {$company->name}");
+                }
+            } else {
+                Log::info("License information already exists for {$company->name}");
+            }
+
+            // Generate AI analysis if not already done
+            if (empty($company->pros) || empty($company->cons)) {
+                Log::info("Generating AI analysis for {$company->name}");
+                $this->generateAIAnalysis($company);
+            } else {
+                Log::info("AI analysis already exists for {$company->name}");
+            }
+
+            // Calculate/update score
+            $score = $this->scoringService->calculateScore($company);
+            $company->update(['score' => $score['overall_score']]);
+
+            // Return the processed company data
+            return [
+                'success' => true,
+                'company' => $company->load(['reviews', 'latestScore', 'license']),
+                'score' => $score,
+                'api_issues' => []
+            ];
+
+        } catch (\Exception $e) {
+            Log::error("Error processing existing company {$company->name}: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Error processing company data: ' . $e->getMessage(),
+                'api_issues' => []
+            ];
+        }
+    }
+
+    private function refreshCompanyData(Company $company): void
+    {
+        // Get fresh reviews from Yelp if we have a Yelp ID
+        if ($company->yelp_id) {
+            try {
+                $yelpReviews = $this->yelpService->getBusinessReviews($company->yelp_id);
+                $this->saveReviews($company, $yelpReviews, 'yelp');
+            } catch (\Exception $e) {
+                Log::warning("Could not refresh Yelp reviews for {$company->name}: " . $e->getMessage());
+            }
+        }
+
+        // Get fresh reviews from Google if we have a Google Place ID
+        if ($company->google_place_id) {
+            try {
+                $googleReviews = $this->googlePlacesService->getBusinessReviews($company->google_place_id);
+                $this->saveReviews($company, $googleReviews, 'google');
+            } catch (\Exception $e) {
+                Log::warning("Could not refresh Google reviews for {$company->name}: " . $e->getMessage());
+            }
+        }
+    }
+
+    private function generateAIAnalysis(Company $company): void
+    {
+        try {
+            $reviews = $company->reviews()->get()->toArray();
+            Log::info("Found " . count($reviews) . " reviews for AI analysis of {$company->name}");
+
+            if (!empty($reviews)) {
+                $summarizedReviews = $this->openAIService->summarizeReviews($reviews);
+                Log::info("AI analysis generated for {$company->name}", [
+                    'pros_count' => count($summarizedReviews['pros'] ?? []),
+                    'cons_count' => count($summarizedReviews['cons'] ?? [])
+                ]);
+
+                $company->update([
+                    'pros' => $summarizedReviews['pros'],
+                    'cons' => $summarizedReviews['cons'],
+                    'ai_report_available' => true,
+                    'ai_report_generated_at' => now(),
+                ]);
+            } else {
+                Log::warning("No reviews found for AI analysis of {$company->name}");
+            }
+        } catch (\Exception $e) {
+            Log::error("Could not generate AI analysis for {$company->name}: " . $e->getMessage());
+        }
+    }
+
     public function checkApiStatus(): array
     {
         $status = [
@@ -35,13 +146,13 @@ class CompanyScreeningService
         if (empty($apiKey)) {
             return [
                 'status' => 'not_configured',
-                'message' => 'Yelp API key is not configured'
+                'message' => 'Yelp is currently unavailable'
             ];
         }
 
         try {
             // Try a simple API call to test the key
-            $response = $this->yelpService->searchBusiness('test', 'New York');
+            $response = $this->yelpService->searchBusiness('test', 'New York', null, 10);
             return [
                 'status' => 'working',
                 'message' => 'Yelp API is working'
@@ -50,7 +161,7 @@ class CompanyScreeningService
             Log::error('Yelp API test failed', ['error' => $e->getMessage()]);
             return [
                 'status' => 'error',
-                'message' => 'Yelp API is not responding correctly. Please check your API key.'
+                'message' => 'Yelp is currently down or not responding'
             ];
         }
     }
@@ -61,13 +172,13 @@ class CompanyScreeningService
         if (empty($apiKey)) {
             return [
                 'status' => 'not_configured',
-                'message' => 'Google Places API key is not configured'
+                'message' => 'Google Places is currently unavailable'
             ];
         }
 
         try {
             // Try a simple API call to test the key
-            $response = $this->googlePlacesService->searchBusiness('test', 'New York');
+            $response = $this->googlePlacesService->searchBusiness('test', 'New York', null, 10);
             return [
                 'status' => 'working',
                 'message' => 'Google Places API is working'
@@ -76,7 +187,7 @@ class CompanyScreeningService
             Log::error('Google Places API test failed', ['error' => $e->getMessage()]);
             return [
                 'status' => 'error',
-                'message' => 'Google Places API is not responding correctly. Please check your API key.'
+                'message' => 'Google Places is currently down or not responding'
             ];
         }
     }
@@ -87,7 +198,7 @@ class CompanyScreeningService
         if (empty($apiKey)) {
             return [
                 'status' => 'not_configured',
-                'message' => 'OpenAI API key is not configured'
+                'message' => 'AI analysis is currently unavailable'
             ];
         }
 
@@ -116,19 +227,19 @@ class CompanyScreeningService
             if (!$hasWorkingApis) {
                 return [
                     'success' => false,
-                    'message' => 'No APIs are currently working. Please check your API keys.',
+                    'message' => 'Our search services are currently experiencing issues. Please try again in a few minutes.',
                     'api_issues' => $apiMessages,
                     'companies' => []
                 ];
             }
 
             // Step 1: Search for the company on Yelp
-            $yelpBusinesses = $this->yelpService->searchBusiness($name, $city, $state);
+            $yelpBusinesses = $this->yelpService->searchBusiness($name, $city, $state, 10);
 
             if (empty($yelpBusinesses)) {
                 $message = 'No businesses found with that name and location.';
                 if (!empty($apiMessages)) {
-                    $message .= ' Note: Some APIs are not working: ' . implode(', ', $apiMessages);
+                    $message .= ' Note: Some search services are currently unavailable.';
                 }
                 return [
                     'success' => false,
@@ -226,7 +337,7 @@ class CompanyScreeningService
             $this->saveReviews($company, $yelpReviews, 'yelp');
 
             // Get reviews from Google Places
-            $googleBusinesses = $this->googlePlacesService->searchBusiness($name, $city, $state);
+            $googleBusinesses = $this->googlePlacesService->searchBusiness($name, $city, $state, 10);
             $googleBusiness = null;
             if (!empty($googleBusinesses)) {
                 $googleBusiness = $googleBusinesses[0];

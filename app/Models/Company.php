@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Company extends Model
 {
@@ -28,6 +29,7 @@ class Company extends Model
         'ai_report_json',
         'ai_report_generated_at',
         'ai_report_available',
+        'job_type_id',
     ];
 
     protected $casts = [
@@ -59,5 +61,10 @@ class Company extends Model
     public function license(): HasOne
     {
         return $this->hasOne(License::class, 'license_no', 'license_number');
+    }
+
+    public function jobType(): BelongsTo
+    {
+        return $this->belongsTo(JobType::class);
     }
 }

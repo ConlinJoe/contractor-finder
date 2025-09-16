@@ -19,7 +19,7 @@ class YelpService
         }
     }
 
-    public function searchBusiness(string $name, string $city, string $state = null): array
+    public function searchBusiness(string $name, string $city, string $state = null, int $radiusMiles = 10): array
     {
         if (empty($this->apiKey)) {
             Log::error('Yelp API key is not configured');
@@ -28,13 +28,22 @@ class YelpService
 
         try {
             $location = $state ? "{$city}, {$state}" : $city;
+            $radiusInMeters = (int) round($radiusMiles * 1609.34); // Convert miles to meters and ensure integer
+
+            Log::info('Yelp API search', [
+                'term' => $name,
+                'location' => $location,
+                'radius_miles' => $radiusMiles,
+                'radius_meters' => $radiusInMeters
+            ]);
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
             ])->get("{$this->baseUrl}/businesses/search", [
                 'term' => $name,
                 'location' => $location,
-                'limit' => 5,
+                'radius' => $radiusInMeters,
+                'limit' => 20,
             ]);
 
             if ($response->successful()) {

@@ -19,7 +19,7 @@ class GooglePlacesService
         }
     }
 
-    public function searchBusiness(string $name, string $city, string $state = null): array
+    public function searchBusiness(string $name, string $city, string $state = null, int $radiusMiles = 10): array
     {
         if (empty($this->apiKey)) {
             Log::error('Google Places API key is not configured');
@@ -29,11 +29,20 @@ class GooglePlacesService
         try {
             $location = $state ? "{$city}, {$state}" : $city;
             $query = "{$name} in {$location}";
+            $radiusInMeters = (int) round($radiusMiles * 1609.34); // Convert miles to meters and ensure integer
+
+            Log::info('Google Places API search', [
+                'query' => $query,
+                'radius_miles' => $radiusMiles,
+                'radius_meters' => $radiusInMeters
+            ]);
 
             $response = Http::get("{$this->baseUrl}/textsearch/json", [
                 'query' => $query,
                 'key' => $this->apiKey,
                 'type' => 'establishment',
+                'radius' => $radiusInMeters,
+                'maxresults' => 20,
             ]);
 
             if ($response->successful()) {
