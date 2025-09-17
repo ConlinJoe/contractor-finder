@@ -4,13 +4,18 @@
     'state' => ''
 ])
 
-<div class="relative bg-gradient-to-r from-blue-600 to-indigo-700 py-20 lg:py-32">
+<div class="relative py-20 lg:py-32">
     <!-- Background Image with Overlay -->
-    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('{{ asset('images/heroes/construction-workers.jpg') }}');">
-        <div class="absolute inset-0 bg-blue-900 bg-opacity-60"></div>
-    </div>
+    @php
+        $heroImage = app()->environment('production')
+            ? Vite::asset('resources/images/heroes/hero-home-01.jpg')
+            : asset('images/heroes/hero-home-01.jpg');
+    @endphp
+    <!-- Background Image -->
+    <img src="{{ $heroImage }}" alt="Hero Background" class="absolute inset-0 w-full h-full object-cover" style="z-index: 1;">
+    <!-- <div class="absolute inset-0 bg-blue-900 bg-opacity-20" style="z-index: 2;"></div> -->
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style="z-index: 3;">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <!-- Left Content -->
             <div class="text-white">
