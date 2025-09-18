@@ -18,7 +18,7 @@
 @endphp
 
 <div class="search-form-container" x-data="{ activeTab: '{{ $searchMode === 'job_type' ? 'jobtype' : 'contractor' }}' }">
-    <x-ui.card variant="elevated" padding="lg" class="bg-white bg-opacity-95 backdrop-blur-sm">
+    <x-ui.card variant="default" padding="lg" class="bg-white bg-opacity-95 backdrop-blur-sm">
         <div class="text-center mb-6">
             <h2 class="text-2xl font-bold text-gray-900 mb-2">Start Your Search</h2>
             <p class="text-gray-600">Get instant contractor verification</p>

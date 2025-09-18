@@ -4,7 +4,7 @@
 ])
 
 @php
-    $baseClasses = 'bg-white rounded-lg shadow-md';
+    $baseClasses = 'bg-white rounded-lg';
 
     $variants = [
         'default' => 'border border-gray-200',
