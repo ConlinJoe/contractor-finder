@@ -1,0 +1,53 @@
+/* Search Form Component Styles */
+
+/* Container query support for search form */
+.search-form-container {
+    container-type: inline-size;
+    width: 100%;
+}
+
+/* Default grid layout for wider containers */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+/* Container queries for responsive layout */
+@container (min-width: 500px) {
+    .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .form-grid .col-span-full {
+        grid-column: 1 / -1;
+    }
+}
+
+@container (min-width: 700px) {
+    .form-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .form-grid .col-span-full {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Ensure form looks good in narrow containers */
+@container (max-width: 499px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid > div {
+        width: 100%;
+    }
+}
+
+/* Tab styling consistency */
+.search-form-container .transition-colors {
+    transition-property: color, background-color, border-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}

@@ -54,77 +54,12 @@
 
             <!-- Right Content - Search Form -->
             <div class="lg:pl-8">
-                <x-ui.card variant="elevated" padding="lg" class="bg-white bg-opacity-95 backdrop-blur-sm">
-                    <div class="text-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Start Your Search</h2>
-                        <p class="text-gray-600">Get instant contractor verification</p>
-                    </div>
-
-                    <!-- Search Form -->
-                    <form action="{{ route('search') }}" method="GET" class="space-y-4">
-                        <!-- Tabs -->
-                        <div class="flex border-b border-gray-200">
-                            <button type="button" class="flex-1 py-2 px-4 text-center border-b-2 border-blue-600 text-blue-600 font-medium">
-                                Search by Contractor
-                            </button>
-                            <button type="button" class="flex-1 py-2 px-4 text-center text-gray-500 font-medium">
-                                Find a Contractor
-                            </button>
-                        </div>
-
-                        <!-- Form Fields -->
-                        <div>
-                            <label for="companyName" class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-                            <input
-                                type="text"
-                                id="companyName"
-                                name="companyName"
-                                value="{{ $companyName }}"
-                                placeholder="e.g., Big Bully Turf"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                required
-                            >
-                        </div>
-
-                        <div>
-                            <label for="city" class="block text-sm font-medium text-gray-700 mb-2">City</label>
-                            <input
-                                type="text"
-                                id="city"
-                                name="city"
-                                value="{{ $city }}"
-                                placeholder="e.g., San Diego"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                required
-                            >
-                        </div>
-
-                        <div>
-                            <label for="state" class="block text-sm font-medium text-gray-700 mb-2">State (Optional)</label>
-                            <input
-                                type="text"
-                                id="state"
-                                name="state"
-                                value="{{ $state }}"
-                                placeholder="Enter state"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                        </div>
-
-                        <!-- Search Button -->
-                        <x-ui.button type="submit" variant="primary" size="lg" class="w-full">
-                            Search Company
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </x-ui.button>
-
-                        <!-- Learn More Link -->
-                        <div class="text-center">
-                            <a href="{{ route('how-it-works') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                Learn how our AI verification works
-                            </a>
-                        </div>
-                    </form>
-                </x-ui.card>
+                <x-forms.search-form
+                    :companyName="$companyName"
+                    :city="$city"
+                    :state="$state"
+                    context="homepage"
+                />
             </div>
         </div>
     </div>

@@ -30,12 +30,13 @@ class CompanyScreener extends Component
 
     public ?string $jobTypeState = null;
 
-    public int $jobTypeRadius = 10; // Default to 10 miles
+    // Removed jobTypeRadius - using fixed 25-mile default in services
 
     // Common fields
     public bool $isLoading = false;
     public bool $showResults = false;
     public bool $showBusinessSelection = false;
+    public bool $showForm = true; // Controls whether to show search form
     public array $businesses = [];
     public ?array $selectedBusiness = null;
     public ?array $results = null;
@@ -146,7 +147,7 @@ class CompanyScreener extends Component
                 $this->selectedJobTypeId,
                 $this->jobTypeCity,
                 $this->jobTypeState,
-                $this->jobTypeRadius
+                25 // Fixed 25-mile radius
             );
 
             if (!$result['success']) {
@@ -212,7 +213,7 @@ class CompanyScreener extends Component
     {
         $this->reset([
             'companyName', 'city', 'state',
-            'selectedJobTypeId', 'jobTypeCity', 'jobTypeState', 'jobTypeRadius',
+            'selectedJobTypeId', 'jobTypeCity', 'jobTypeState',
             'isLoading', 'showResults', 'showBusinessSelection',
             'businesses', 'results', 'errorMessage', 'apiIssues', 'jobTypeResults'
         ]);

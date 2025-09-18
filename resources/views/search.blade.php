@@ -11,12 +11,31 @@
             </p>
         </div>
 
-        <!-- Search Component -->
+        <!-- Search Form -->
+        <div class="max-w-2xl mx-auto mb-8">
+            <x-forms.search-form
+                :companyName="$companyName ?? ''"
+                :city="$city ?? ''"
+                :state="$state ?? ''"
+                :searchMode="$searchMode ?? 'company'"
+                :selectedJobTypeId="$selectedJobTypeId ?? null"
+                :jobTypeCity="$jobTypeCity ?? ''"
+                :jobTypeState="$jobTypeState ?? ''"
+                context="search"
+            />
+        </div>
+
+        <!-- Search Results -->
         <div class="max-w-4xl mx-auto">
             @livewire('company-screener', [
                 'companyName' => $companyName ?? '',
                 'city' => $city ?? '',
-                'state' => $state ?? ''
+                'state' => $state ?? '',
+                'searchMode' => $searchMode ?? 'company',
+                'selectedJobTypeId' => $selectedJobTypeId ?? null,
+                'jobTypeCity' => $jobTypeCity ?? '',
+                'jobTypeState' => $jobTypeState ?? '',
+                'showForm' => false
             ])
         </div>
     </div>

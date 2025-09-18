@@ -19,7 +19,7 @@ class GooglePlacesService
         }
     }
 
-    public function searchBusiness(string $name, string $city, string $state = null, int $radiusMiles = 10): array
+    public function searchBusiness(string $name, string $city, string $state = null, int $radiusMiles = 25): array
     {
         if (empty($this->apiKey)) {
             Log::error('Google Places API key is not configured');

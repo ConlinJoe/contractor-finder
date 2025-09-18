@@ -1,0 +1,40 @@
+# Laravel Project Rules
+
+## Development Philosophy
+- ALWAYS follow Laravel guidelines and best practices FIRST
+- When implementing features, use established Laravel patterns and conventions
+- Prioritize clean architecture and separation of concerns
+- Follow the existing project structure and patterns before suggesting alternatives
+
+## JavaScript Guidelines
+- Use NO jQuery in this project...ever. Always use Javascript.
+- Use vanilla JavaScript or modern ES6+ features
+- Prefer pure JavaScript implementations over jQuery-dependent libraries
+
+## CSS/Styling Guidelines
+- Do not add styles in blade templates. All styles should be added to either app.css or in its own file that app.css imports in.
+- NEVER add <style> tags in Blade templates. This should never happen.
+- Use separate CSS files for component-specific styles (e.g., swiper.css, components.css)
+- Import all CSS files into resources/css/app.css using @import statements
+- Maintain clean separation between markup (Blade) and styles (CSS)
+- Follow the pattern: create dedicated CSS files and import them in app.css
+- Exception: Inline styles are acceptable for specific cases like background images or dynamic styles
+
+## JavaScript/Library Guidelines
+- NEVER add JavaScript libraries arbitrarily in Blade templates. This should never happen.
+- All JavaScript libraries should be imported in resources/js/app.js or organized in utilities files
+- Use proper module imports in JavaScript files, not CDN links in templates
+- Keep JavaScript logic in dedicated JS files, not inline in Blade templates
+- Exception: Inline JavaScript is acceptable for AlpineJS directives and simple interactions
+
+## Laravel Best Practices
+- Follow Laravel naming conventions
+- Use Blade components for reusable UI elements
+- Leverage Livewire for dynamic interactions
+- Use proper MVC architecture
+
+## Code Organization
+- Keep business logic in Service classes
+- Use proper dependency injection
+- Follow PSR standards for PHP code
+- Organize assets properly in resources/ directory

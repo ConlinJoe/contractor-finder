@@ -1,12 +1,13 @@
 <div class="py-8" x-data="{ activeTab: '{{ $searchMode }}' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4">Contractor Search Tool</h1>
-            <p class="text-lg text-gray-600">Search for contractors by company name or job type to get comprehensive reviews and scoring</p>
-        </div>
+        @if($showForm)
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Contractor Search Tool</h1>
+                <p class="text-lg text-gray-600">Search for contractors by company name or job type to get comprehensive reviews and scoring</p>
+            </div>
 
-        <!-- Tab Navigation -->
+            <!-- Tab Navigation -->
         <div class="mb-8">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8 justify-center">
@@ -209,6 +210,7 @@
                     </div>
                 </div>
             </div>
+        @endif
         @endif
 
         <!-- API Issues Warning -->

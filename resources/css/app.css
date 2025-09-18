@@ -4,9 +4,9 @@
 /* FontAwesome */
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 
-/* Slick Slider */
-@import 'slick-carousel/slick/slick.css';
-@import 'slick-carousel/slick/slick-theme.css';
+/* Components */
+@import './components.css';
+
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -86,3 +86,23 @@
 /* AlpineJS specific classes */
 [x-cloak] { display: none !important; }
 .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+
+
+/* Swiper - Platform Logos */
+.platform-logos-swiper .swiper-slide {
+    width: auto !important;              /* needed for slidesPerView:'auto' */
+    min-width: 120px;                    /* adjust to taste */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 70px;
+}
+.platform-logos-swiper .swiper-wrapper {
+    transition-timing-function: linear !important;
+}
+  .platform-logos-swiper .swiper-slide img,
+  .platform-logos-swiper .swiper-slide svg {
+    height: 30px;
+    width: auto;
+    display:block;
+}
