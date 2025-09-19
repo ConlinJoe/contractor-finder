@@ -29,6 +29,5 @@
         <x-layout.footer />
     </div>
 
-    @livewireScripts
 </body>
 </html>

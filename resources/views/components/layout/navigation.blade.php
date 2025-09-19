@@ -1,4 +1,4 @@
-<nav class="bg-white shadow-sm border-b border-gray-200 py-5">
+<nav class="bg-white shadow-sm border-b border-gray-200 py-5" x-data="{ mobileMenuOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
@@ -37,15 +37,24 @@
 
             <!-- Mobile menu button -->
             <div class="md:hidden">
-                <button type="button" class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900"
-                    x-data @click="mobileMenuOpen = !mobileMenuOpen">
-                    <i class="fas fa-bars text-xl"></i>
+                <button type="button"
+                        class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900"
+                        @click="mobileMenuOpen = !mobileMenuOpen"
+                        :aria-expanded="mobileMenuOpen.toString()"
+                        aria-controls="mobileMenu">
+                    <i class="fas fa-bars text-xl" aria-hidden="true"></i>
+                    <span class="sr-only">Open main menu</span>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Navigation -->
-        <div class="md:hidden" x-data="{ mobileMenuOpen: false }" x-show="mobileMenuOpen" x-transition>
+        <div id="mobileMenu"
+             class="md:hidden"
+             x-show="mobileMenuOpen"
+             x-transition
+             @click.outside="mobileMenuOpen = false"
+             x-cloak>
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
                 <a href="{{ route('home') }}"
                     class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition duration-200 {{ request()->routeIs('home') ? 'text-blue-600 font-medium' : '' }}">
